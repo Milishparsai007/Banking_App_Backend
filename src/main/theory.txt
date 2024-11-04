@@ -1,10 +1,9 @@
+
+ANNOTATION DOCS
 @Builder:-
 The @Builder annotation is a feature in Lombok, a library that reduces boilerplate code in Java classes.
 It is commonly used in Spring Boot applications to generate builder methods for classes.
 builder() is a creational design pattern, which allows constructing complex objects step by step.
-
-For sending emails, we need to add a dependency- springboot-starter-mail from mavenrepository.com
-now configure the application.properties for this dependency
 
 @Data:-
 In Spring Boot, the @Data annotation is a shortcut that generates boilerplate code for a class:
@@ -13,6 +12,15 @@ Setter methods: For all non-final, non-static fields
 equals() method: Checks for field-by-field equality
 hashCode() method: Calculates hash code based on the fields
 toString() method: Returns a string representation of the object
+
+@Component
+The @Component annotation placed above a class means there will be a bean of that class. Like other beans,
+a component can be injected using the @Autowired annotation.
+Moreover, constructors can be used with or without this annotation.
+
+IMPLEMENTATION DOCS
+For sending emails, we need to add a dependency- springboot-starter-mail from mavenrepository.com
+now configure the application.properties for this dependency
 
 DTO and PAYLOAD are same things i.e., they define that what will come in the respone reuqest of the api and we need
 to actually deal with them and they will be the output of the response request.

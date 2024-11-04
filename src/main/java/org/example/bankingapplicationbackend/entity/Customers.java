@@ -7,6 +7,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -14,8 +16,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder //used to create objects
 @Entity
-@Table(name = "Users")
-public class User {
+@Table(name = "Customers")
+public class Customers {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -36,4 +38,8 @@ public class User {
     @UpdateTimestamp
     private LocalDateTime modifiedAt;
 
+
+    //list of transactions that the customers made.
+    @OneToMany(mappedBy = "customers", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    private List<Transactions> transactionsList=new ArrayList<>();
 }

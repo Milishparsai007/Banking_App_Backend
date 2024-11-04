@@ -6,6 +6,10 @@ import java.util.Date;
 public class AccountUtils {
 
     //we will create custom status codes and messages for displaying the users.
+
+    public static final String IFSC_Code="MPBA0005246";
+    public static final String BANK_MAIL="milishspringboot@gmail.com";
+
     public static final String ACCOUNT_EXISTS_CODE="001";
     public static final String ACCOUNT_EXISTS_MESSAGE="Account already exists.";
     public static final String ACCOUNT_CREATION_CODE="002";

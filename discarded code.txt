@@ -1,0 +1,264 @@
+//debit
+@Override
+//    public BankResponse debitAccount(CreditDebitRequest request) {
+//
+//        //base condition here will be that beneficiary and debitor account cannot be same.
+//        if(request.getBeneficiaryAccountNumber().equals(request.getDebitorAccountNumber()))
+//        {
+//            return BankResponse.builder()
+//                    .accountInfo(null)
+//                    .responseMessage(AccountUtils.SAME_ACCOUNT_TRANSACTION_ERROR)
+//                    .build();
+//        }
+//
+//
+//        boolean beneficiaryAccountExists = userRepo.existsByAccountNumber(request.getBeneficiaryAccountNumber());
+//        boolean debitorAccountExists = userRepo.existsByAccountNumber(request.getDebitorAccountNumber());
+//        if(!debitorAccountExists)
+//        {
+//            return BankResponse.builder()
+//                    .responseCode(AccountUtils.ACCOUNT_NOT_FOUND_CODE)
+//                    .responseMessage(AccountUtils.ACCOUNT_NOT_FOUND_MESSAGE)
+//                    .accountInfo(null)
+//                    .build();
+//        }
+//
+//        //if beneficiary account is not in our bank then no need to worry about its details.
+//        //just debit the debitor account
+//        if (!beneficiaryAccountExists)
+//        {
+//            User debitCustomers = userRepo.findUserByAccountNumber(request.getDebitorAccountNumber());
+//            debitCustomers.setAccountBalance(debitCustomers.getAccountBalance().subtract(request.getAmount()));
+//            userRepo.save(debitCustomers);
+//
+//            //now send email updates to the credited account which is from our bank.
+//            String recieverAccountNumber=request.getBeneficiaryAccountNumber().toString().substring(0, request.getBeneficiaryAccountNumber().toString().length() - 2).replaceAll("\\d", "X")
+//                    + "" + request.getBeneficiaryAccountNumber().toString().substring(request.getBeneficiaryAccountNumber().toString().length() - 3);
+//            EmailDetails emailDetails = EmailDetails.builder()
+//                    .recipient(debitCustomers.getEmail())
+//                    .subject("Account XXXXXXX" + debitCustomers.getAccountNumber().toString().substring(7) + " debited")
+//                    .messageBody(AccountUtils.ACCOUNT_DEBITED_EMAIL + " " + request.getAmount() + " to "
+//                            + recieverAccountNumber
+//                            + "\n" + "Remaining balance is : " + debitCustomers.getAccountBalance()
+//                    )
+//                    .build();
+//            emailService.sendEmail(emailDetails);
+//
+//            List<AccountInfo> accountInfoList = new ArrayList<>();
+//            accountInfoList.add(AccountInfo.builder()
+//                    .message("Debited party details")
+//                    .accountNumber(debitCustomers.getAccountNumber())
+//                    .accountName(debitCustomers.getFirstName()+" "+debitCustomers.getLastName()+" "+debitCustomers.getOtherName())
+//                    .accountBalance(debitCustomers.getAccountBalance())
+//                    .build());
+//            accountInfoList.add(AccountInfo.builder()
+//                    .message("Beneficiary party details")
+//                    .accountNumber(request.getBeneficiaryAccountNumber())
+//                    .build());
+//
+//            return BankResponse.builder()
+//                    .responseCode(AccountUtils.ACCOUNT_DEBITED_CODE)
+//                    .responseMessage(AccountUtils.ACCOUNT_DEBITED_MESSAGE)
+//                    .accountInfo(AccountInfo.builder()
+//                            .message("Account Debited")
+//                            .accountNumber(debitCustomers.getAccountNumber())
+//                            .accountName(debitCustomers.getFirstName() + " " + debitCustomers.getLastName() + " " + debitCustomers.getOtherName())
+//                            .accountBalance(debitCustomers.getAccountBalance())
+//                            .build())
+//                    .accountInfoList(accountInfoList)
+//                    .build();
+//        }
+//
+//        //if both accounts lie in our bank the check for debit account balance and request balance
+//        //if low balance then no transaction happens
+//        else
+//        {
+//            User debitCustomers = userRepo.findUserByAccountNumber(request.getDebitorAccountNumber());
+//            BigInteger debitUserBalance = debitCustomers.getAccountBalance().toBigInteger();
+//            BigInteger requestAmount = request.getAmount().toBigInteger();
+//            if (debitUserBalance.intValue()<requestAmount.intValue()) {
+//                return BankResponse.builder()
+//                        .responseCode(AccountUtils.INSUFFICIENT_BALANCE_CODE)
+//                        .responseMessage(AccountUtils.INSUFFICIENT_BALANCE_MESSAGE)
+//                        .accountInfo(AccountInfo.builder()
+//                                .accountNumber(debitCustomers.getAccountNumber())
+//                                .accountBalance(debitCustomers.getAccountBalance())
+//                                .build())
+//                        .build();
+//            }
+//
+//
+//            User creditedCustomers = userRepo.findUserByAccountNumber(request.getBeneficiaryAccountNumber());
+//            creditedCustomers.setAccountBalance(creditedCustomers.getAccountBalance().add(request.getAmount()));
+//            userRepo.save(creditedCustomers);
+//            debitCustomers.setAccountBalance(debitCustomers.getAccountBalance().subtract(request.getAmount()));
+//            userRepo.save(debitCustomers);
+//            List<AccountInfo> accountInfoList = new ArrayList<>();
+//            accountInfoList.add(AccountInfo.builder()
+//                    .message("Debited party details")
+//                    .accountNumber(debitCustomers.getAccountNumber())
+//                    .accountName(debitCustomers.getFirstName() + " " + debitCustomers.getLastName() + " " + debitCustomers.getOtherName())
+//                    .accountBalance(debitCustomers.getAccountBalance())
+//                    .build());
+//            accountInfoList.add(AccountInfo.builder()
+//                    .message("Beneficiary party details")
+//                    .accountNumber(creditedCustomers.getAccountNumber())
+//                    .accountName(creditedCustomers.getFirstName() + " " + creditedCustomers.getLastName() + " " + creditedCustomers.getOtherName())
+//                    .accountBalance(creditedCustomers.getAccountBalance())
+//                    .build());
+//
+//            //now send email alerts to both parties
+//
+//            String sendersAccountNumber=request.getDebitorAccountNumber().toString().substring(0, request.getDebitorAccountNumber().toString().length() - 2).replaceAll("\\d", "X")
+//                    + "" + request.getDebitorAccountNumber().toString().substring(request.getDebitorAccountNumber().toString().length() - 3);
+//            EmailDetails emailDetailsCreditParty = EmailDetails.builder()
+//                    .recipient(creditedCustomers.getEmail())
+//                    .subject("Account XXXXXXX" + creditedCustomers.getAccountNumber().toString().substring(7) + " credited")
+//                    .messageBody(AccountUtils.ACCOUNT_CREDITED_EMAIL + " " + request.getAmount() +
+//                            " from " + sendersAccountNumber
+//                            + "\n" + "Remaining balance is : " + creditedCustomers.getAccountBalance()
+//                    )
+//                    .build();
+//            emailService.sendEmail(emailDetailsCreditParty);
+//
+//            String recieverAccountNumber=request.getBeneficiaryAccountNumber().toString().substring(0, request.getBeneficiaryAccountNumber().toString().length() - 2).replaceAll("\\d", "X")
+//                    + "" + request.getBeneficiaryAccountNumber().toString().substring(request.getBeneficiaryAccountNumber().toString().length() - 3);
+//
+//            EmailDetails emailDetailsDebitParty = EmailDetails.builder()
+//                    .recipient(debitCustomers.getEmail())
+//                    .subject("Account XXXXXXX" + debitCustomers.getAccountNumber().toString().substring(7) + " debited")
+//                    .messageBody(AccountUtils.ACCOUNT_DEBITED_EMAIL + " " + request.getAmount() + " to "
+//                            + recieverAccountNumber
+//                            + "\n" + "Remaining balance is : " + debitCustomers.getAccountBalance()
+//                    )
+//                    .build();
+//            emailService.sendEmail(emailDetailsDebitParty);
+//
+//            return BankResponse.builder()
+//                    .responseCode(AccountUtils.ACCOUNT_DEBITED_CODE + " " + AccountUtils.ACCOUNT_CREDITED_CODE)
+//                    .responseMessage("The account "+debitCustomers.getAccountNumber()+" "+AccountUtils.ACCOUNT_DEBITED_MESSAGE
+//                            + " The account " +creditedCustomers.getAccountNumber()+ " " + AccountUtils.ACCOUNT_CREDITED_MESSAGE)
+//                    .accountInfoList(accountInfoList)
+//                    .build();
+//        }
+//    }
+
+
+
+public List<TransactionDTO> sendBankStatementToEmail(String accountNumber,String startDate,String endDate) throws FileNotFoundException, DocumentException {
+
+        User customers=userRepo.findUserByAccountNumber(accountNumber);
+        LocalDate start=LocalDate.parse(startDate, DateTimeFormatter.ISO_DATE);
+        LocalDate end=LocalDate.parse(endDate, DateTimeFormatter.ISO_DATE);
+        List<Transactions> transactionsList=transactionRepo.findTransactionsByUserAndDateRange(customers,start,end);
+        List<TransactionDTO> transactionDTOList=transactionsList.stream().map((transaction)->this.modelMapper.map(transaction, TransactionDTO.class)).toList();
+        User user1=userRepo.findUserByAccountNumber(accountNumber);
+
+        //DESIGNING THE PDF
+        Rectangle statementSize=new Rectangle(A4);
+        Document document=new Document(statementSize);
+        log.info("Setting size of document");
+        OutputStream outputStream=new FileOutputStream(FILE);
+        PdfWriter.getInstance(document,outputStream);
+        document.open();
+
+        PdfPTable nameOfTheBank=new PdfPTable(1);
+        PdfPCell name=new PdfPCell(new Phrase("MP BANK"));
+        nameOfTheBank.addCell(name);
+        PdfPCell spaceWithoutBorder=new PdfPCell();
+        PdfPCell space=new PdfPCell();
+        spaceWithoutBorder.setBorder(0);
+        nameOfTheBank.addCell(space);
+
+        //CREATING A TABLE FOR DISPLAYING BANK DETAILS AND CUSTOMER DETAILS.
+        //Bank details
+        PdfPTable bankInfoTable=new PdfPTable(2);
+        PdfPCell bankName=new PdfPCell(new Phrase("MP Bank"));
+        bankName.setBorder(0);
+//        bankName.setPadding(20f);
+        PdfPCell bankAddress=new PdfPCell(new Phrase("Address : B3, Patang Plaza Phase-5, Trimurti Chowk, Pune"));
+        bankAddress.setBorder(0);
+        PdfPCell ifsc=new PdfPCell(new Phrase("IFSC Code : "+ AccountUtils.IFSC_Code));
+        ifsc.setBorder(0);
+        PdfPCell bankContact=new PdfPCell(new Phrase("Branch mail : "+AccountUtils.BANK_MAIL));
+        bankContact.setBorder(0);
+
+        //customers details
+        String userName=customers.getFirstName()+" "+customers.getOtherName()+" "+customers.getLastName();
+        PdfPCell customerName=new PdfPCell(new Phrase("Account Name : "+userName));
+        customerName.setBorder(0);
+        PdfPCell customerAccNum=new PdfPCell(new Phrase("Account Number : "+user1.getAccountNumber()));
+        customerAccNum.setBorder(0);
+        PdfPCell dateOfStatement=new PdfPCell(new Phrase("Report Date : "+reportCreatedAt));
+        dateOfStatement.setBorder(0);
+        PdfPCell customerAddress=new PdfPCell(new Phrase("Address : "+user1.getAddress()));
+        customerAddress.setBorder(0);
+        PdfPCell customerContactNum=new PdfPCell(new Phrase("Contact Number : "+user1.getPhoneNumber()));
+        customerContactNum.setBorder(0);
+
+        //adding the data in the table.
+        //NOTE THAT DATA ADDS AS COLUMN WISE.
+        bankInfoTable.addCell(bankName);
+        bankInfoTable.addCell(customerName);
+        bankInfoTable.addCell(bankAddress);
+        bankInfoTable.addCell(customerAccNum);
+        bankInfoTable.addCell(ifsc);
+        bankInfoTable.addCell(dateOfStatement);
+        bankInfoTable.addCell(bankContact);
+        bankInfoTable.addCell(customerAddress);
+        bankInfoTable.addCell(spaceWithoutBorder);
+        bankInfoTable.addCell(customerContactNum);
+        bankInfoTable.addCell(spaceWithoutBorder);
+
+        String para="STATEMENT OF ACCOUNT FOR THE PERIOD FROM "+startDate+" TO "+endDate;
+        Paragraph paragraph=new Paragraph(para);
+
+        //NOW CREATING A TABLE WHICH HAAS ONLY ONE COLUMN THAT DISPLAYS A MESSAGE :-
+        PdfPTable message=new PdfPTable(1);
+        PdfPCell messageDisplay=new PdfPCell(new Phrase(paragraph));
+        messageDisplay.setBorder(0);
+        message.addCell(messageDisplay);
+        message.addCell(spaceWithoutBorder);
+
+        //NOW CREATING THE TRANSACTIONS TABLE
+        PdfPTable transactionsTable=new PdfPTable(5);
+        PdfPCell date=new PdfPCell(new Phrase("DATE"));
+        PdfPCell particulars=new PdfPCell(new Phrase("PARTICULARS"));
+        PdfPCell withdrawals=new PdfPCell(new Phrase("WITHDRAWALS"));
+        PdfPCell deposits=new PdfPCell(new Phrase("DEPOSITS"));
+        PdfPCell balance=new PdfPCell(new Phrase("BALANCE"));
+        transactionsTable.addCell(date);
+        transactionsTable.addCell(particulars);
+        transactionsTable.addCell(withdrawals);
+        transactionsTable.addCell(deposits);
+        transactionsTable.addCell(balance);
+
+        //NOW ADD EACH TRANSACTION TO THE TABLE CELL COLUMN WISE.
+        //NOTE THAT EACH COLUMN'S DETAIL SHOULD MATCH THE TRANSACTION'S DETAIL.
+        transactionDTOList.forEach(transactionDTO ->
+        {
+            transactionsTable.addCell(transactionDTO.getCreatedAt());
+            transactionsTable.addCell(transactionDTO.getDescription());
+            if (transactionDTO.getTransactionType().equals("DEBIT"))
+            {
+                transactionsTable.addCell(transactionDTO.getAmount().toString());
+                transactionsTable.addCell(space);
+            }
+            else
+            {
+                transactionsTable.addCell(space);
+                transactionsTable.addCell(transactionDTO.getAmount().toString());
+            }
+//            String tId=this.modelMapper.map(transactionDTO, Transactions.class).getTransactionId();
+            String remainingBalance=transactionRepo.findRemainingBalanceByTransactionId(transactionDTO.getTransactionId()).toString();
+            transactionsTable.addCell(remainingBalance);
+        });
+
+        document.add(nameOfTheBank);
+        document.add(bankInfoTable);
+        document.add(message);
+        document.add(transactionsTable);
+        document.close();
+
+        return transactionDTOList;
+    }
