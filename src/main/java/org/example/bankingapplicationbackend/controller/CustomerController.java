@@ -5,7 +5,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.example.bankingapplicationbackend.dto.*;
-import org.example.bankingapplicationbackend.service.impl.CredentialsServiceImpl;
+import org.example.bankingapplicationbackend.service.impl.securityService.CredentialsServiceImpl;
 import org.example.bankingapplicationbackend.service.impl.bankStatementService.BankStatement;
 import org.example.bankingapplicationbackend.service.impl.customerService.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +26,7 @@ public class CustomerController {
     CredentialsServiceImpl credentialsService;
 
     @PostMapping("/login")
-    public String login(@RequestBody LoginRequest loginRequest)
+    public JwtAuthResponse login(@RequestBody LoginRequest loginRequest)
     {
         return credentialsService.verify(loginRequest);
     }

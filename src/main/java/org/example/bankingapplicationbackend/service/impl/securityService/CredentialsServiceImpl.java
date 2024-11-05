@@ -1,7 +1,8 @@
-package org.example.bankingapplicationbackend.service.impl;
+package org.example.bankingapplicationbackend.service.impl.securityService;
 
 import jakarta.transaction.Transactional;
 import org.example.bankingapplicationbackend.dto.CredentialsDto;
+import org.example.bankingapplicationbackend.dto.JwtAuthResponse;
 import org.example.bankingapplicationbackend.dto.LoginRequest;
 import org.example.bankingapplicationbackend.entity.Credentials;
 import org.example.bankingapplicationbackend.repository.CredentialsRepo;
@@ -33,16 +34,21 @@ public class CredentialsServiceImpl {
         credentialsRepo.save(credentials);
     }
 
-    public String verify(LoginRequest loginRequest) {
+    public JwtAuthResponse verify(LoginRequest loginRequest) {
         Authentication authentication=
                 authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                         loginRequest.getUserName(),loginRequest.getPassword()
                 ));
+        var credential =credentialsRepo.findByUsername(loginRequest.getUserName());
+        var jwt=jwtService.generateToken(credential);
+
+        JwtAuthResponse jwtAuthResponse=new JwtAuthResponse();
+        jwtAuthResponse.setToken(jwt);
 
         if(authentication.isAuthenticated())
         {
-            return jwtService.generateToken(loginRequest.getUserName());
+            return new JwtAuthResponse(jwtService.generateToken(credential));
         }
-        return "Fail";
+        return new JwtAuthResponse("FAIL");
     }
 }

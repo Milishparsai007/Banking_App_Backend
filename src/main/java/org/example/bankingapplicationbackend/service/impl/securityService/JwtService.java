@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.example.bankingapplicationbackend.entity.Credentials;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +30,7 @@ public class JwtService {
             throw new RuntimeException(e);
         }
     }
-    public String generateToken(String username) {
+    public String generateToken(Credentials credentials) {
         Map<String, Object> claims=new HashMap<>();
         //this claims map is for the payload in the token it will have the subject which is username
         //issued at and expiration time.
@@ -37,7 +38,7 @@ public class JwtService {
                 .builder()
                 .claims()
                 .add(claims)
-                .subject(username)
+                .subject(credentials.getUsername())
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis()+60*60*30))
                 .and()

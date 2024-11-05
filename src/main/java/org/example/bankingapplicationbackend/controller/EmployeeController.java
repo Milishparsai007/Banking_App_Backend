@@ -3,7 +3,7 @@ package org.example.bankingapplicationbackend.controller;
 import com.itextpdf.text.DocumentException;
 import org.example.bankingapplicationbackend.dto.*;
 import org.example.bankingapplicationbackend.entity.Employee;
-import org.example.bankingapplicationbackend.service.impl.CredentialsServiceImpl;
+import org.example.bankingapplicationbackend.service.impl.securityService.CredentialsServiceImpl;
 import org.example.bankingapplicationbackend.service.impl.bankStatementService.BankStatement;
 import org.example.bankingapplicationbackend.service.impl.customerService.CustomerServiceImpl;
 import org.example.bankingapplicationbackend.service.impl.employeeService.EmployeeServiceImpl;
@@ -29,7 +29,7 @@ public class EmployeeController {
     BankStatement bankStatement;
 
     @PostMapping("/login")
-    public String login(@RequestBody LoginRequest loginRequest)
+    public JwtAuthResponse login(@RequestBody LoginRequest loginRequest)
     {
         return credentialsService.verify(loginRequest);
     }
@@ -43,7 +43,6 @@ public class EmployeeController {
 
     @PostMapping("/create-user")
     public BankResponse createAccount(@RequestBody UserDTO userDTO)
-
     {
         return customerService.createAccount(userDTO);
     }

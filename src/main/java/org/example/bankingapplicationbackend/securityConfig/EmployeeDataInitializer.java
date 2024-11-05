@@ -44,7 +44,7 @@ public class EmployeeDataInitializer {
                 Credentials credentials = new Credentials();
                 credentials.setUsername("dummyEmployee");
                 credentials.setPassword(passwordEncoder.encode("dummyPassword"));
-                credentials.setRole(Role.EMPLOYEE.toString());
+                credentials.setRole(Role.EMPLOYEE);
                 credentialsRepo.save(credentials);
                 System.out.println("Dummy credentials created for authentication.");
             }

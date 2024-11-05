@@ -19,5 +19,5 @@ public class Credentials {
     private long id;
     private String username;
     private String password;
-    private String role;
+    private Role role;
 }

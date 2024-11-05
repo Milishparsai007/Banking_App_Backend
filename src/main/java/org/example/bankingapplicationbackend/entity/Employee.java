@@ -18,7 +18,7 @@ public class Employee {
     private Long id;
     @Column(name = "Employee Name",nullable = false)
     private String userName;
-    private final String role=Role.EMPLOYEE.toString();
+    private final Role role=Role.EMPLOYEE;
     @Column(name = "Password",nullable = false)
     private String password;
 }

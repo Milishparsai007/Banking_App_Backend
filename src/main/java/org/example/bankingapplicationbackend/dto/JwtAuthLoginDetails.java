@@ -4,14 +4,11 @@ import lombok.*;
 import org.example.bankingapplicationbackend.entity.Role;
 
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
-@NoArgsConstructor
-@Builder
 @Data
-
-public class CredentialsDto {
-    private String userName;
-    private String password;
+public class JwtAuthLoginDetails {
+    private String username;
     private Role role;
 }

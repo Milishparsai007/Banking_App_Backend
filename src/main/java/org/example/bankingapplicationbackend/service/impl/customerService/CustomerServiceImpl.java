@@ -5,7 +5,7 @@ import org.example.bankingapplicationbackend.entity.Customers;
 import org.example.bankingapplicationbackend.entity.Transactions;
 import org.example.bankingapplicationbackend.repository.TransactionRepo;
 import org.example.bankingapplicationbackend.repository.CustomerRepo;
-import org.example.bankingapplicationbackend.service.impl.CredentialsServiceImpl;
+import org.example.bankingapplicationbackend.service.impl.securityService.CredentialsServiceImpl;
 import org.example.bankingapplicationbackend.service.impl.emailService.EmailService;
 import org.example.bankingapplicationbackend.service.impl.transactionService.TransactionService;
 import org.example.bankingapplicationbackend.utils.AccountUtils;
@@ -71,6 +71,8 @@ public class CustomerServiceImpl implements CustomerService {
                 .email(userDTO.getEmail())
                 .phoneNumber(userDTO.getPhoneNumber())
                 .alternateNumber(userDTO.getAlternateNumber())
+                .userName(userDTO.getUserName())
+                .password(userDTO.getPassword())
                 .status("ACTIVE") //status represents that this account is active, in processing or resrticted. We have created this for our own sake
                 .build();
                  //this is used to build objects.

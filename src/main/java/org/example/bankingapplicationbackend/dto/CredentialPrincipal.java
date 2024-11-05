@@ -10,7 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.Collections;
 
-@AllArgsConstructor
+
 @NoArgsConstructor
 @Getter
 @Setter
@@ -19,9 +19,13 @@ public class CredentialPrincipal implements UserDetails {
 
 //    private Employee employee;
     private Credentials credentials;
+    public CredentialPrincipal(Credentials credentials) {
+        this.credentials = credentials;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singleton(new SimpleGrantedAuthority("USER"));
+        return Collections.singleton(new SimpleGrantedAuthority(credentials.getRole().toString()));
     }
 
     @Override

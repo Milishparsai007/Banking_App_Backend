@@ -37,7 +37,7 @@ public class Customers {
 
 
     private String userName;
-    private final String role=Role.CUSTOMER.toString();
+    private final Role role=Role.CUSTOMER;
     private String password;
     @CreationTimestamp
 

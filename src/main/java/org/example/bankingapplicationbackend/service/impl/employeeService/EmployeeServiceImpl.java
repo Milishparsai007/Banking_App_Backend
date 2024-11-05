@@ -3,12 +3,9 @@ package org.example.bankingapplicationbackend.service.impl.employeeService;
 import org.example.bankingapplicationbackend.dto.*;
 import org.example.bankingapplicationbackend.entity.Employee;
 import org.example.bankingapplicationbackend.repository.EmployeeRepo;
-import org.example.bankingapplicationbackend.service.impl.CredentialsServiceImpl;
+import org.example.bankingapplicationbackend.service.impl.securityService.CredentialsServiceImpl;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
