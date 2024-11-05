@@ -5,6 +5,7 @@ import org.example.bankingapplicationbackend.entity.Customers;
 import org.example.bankingapplicationbackend.entity.Transactions;
 import org.example.bankingapplicationbackend.repository.TransactionRepo;
 import org.example.bankingapplicationbackend.repository.CustomerRepo;
+import org.example.bankingapplicationbackend.service.impl.CredentialsServiceImpl;
 import org.example.bankingapplicationbackend.service.impl.emailService.EmailService;
 import org.example.bankingapplicationbackend.service.impl.transactionService.TransactionService;
 import org.example.bankingapplicationbackend.utils.AccountUtils;
@@ -32,6 +33,9 @@ public class CustomerServiceImpl implements CustomerService {
     TransactionService transactionService;
     ModelMapper modelMapper=new ModelMapper();
 
+    @Autowired
+    CredentialsServiceImpl credentialsService;
+
     @Override
     public BankResponse createAccount(UserDTO userDTO) {
         //creating an account means saving a new customers in database.
@@ -46,6 +50,15 @@ public class CustomerServiceImpl implements CustomerService {
                     .accountInfo(null)
                     .build();
         }
+
+        CredentialsDto customerCred=CredentialsDto.builder()
+                .userName(userDTO.getUserName())
+                .password(userDTO.getPassword())
+                .role(userDTO.getRole())
+                .build();
+        credentialsService.addUser(customerCred);
+
+
         Customers newCustomers = Customers.builder()
                 .firstName(userDTO.getFirstName())
                 .lastName(userDTO.getLastName())

@@ -1,13 +1,17 @@
 package org.example.bankingapplicationbackend.controller;
 
+import com.itextpdf.text.DocumentException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.example.bankingapplicationbackend.dto.*;
+import org.example.bankingapplicationbackend.service.impl.CredentialsServiceImpl;
+import org.example.bankingapplicationbackend.service.impl.bankStatementService.BankStatement;
 import org.example.bankingapplicationbackend.service.impl.customerService.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.FileNotFoundException;
 import java.util.List;
 
 @RestController
@@ -18,6 +22,14 @@ import java.util.List;
 public class CustomerController {
     @Autowired
     CustomerService customerService;
+    @Autowired
+    CredentialsServiceImpl credentialsService;
+
+    @PostMapping("/login")
+    public String login(@RequestBody LoginRequest loginRequest)
+    {
+        return credentialsService.verify(loginRequest);
+    }
 
     //GET METHODS
     @GetMapping("/balanceEnquiry")
@@ -50,36 +62,6 @@ public class CustomerController {
         return customerService.nameEnquiry(enquiryRequest);
     }
 
-    @GetMapping("/getAllUsers")
-    @Operation(
-            summary = "Get all account",
-            description = "Display all accounts present in DB"
-    )
-    @ApiResponse(
-            responseCode = "302",
-            description = "FOUND"
-
-    )
-    public List<UserDTO> getAllUsers()
-    {
-        return customerService.getAllUsers();
-    }
-
-    @Operation(
-            summary = "Display Customers details for a particular account",
-            description = "Get Customers details for a particular account number by passing account number in the request"
-    )
-    @ApiResponse(
-            responseCode = "302",
-            description = "Customers FOUND"
-
-    )
-    @GetMapping("/getUser/{accountNumber}")
-    public BankResponse getUserByAccountNumber(@PathVariable String accountNumber)
-    {
-        return customerService.getUserByAccountNumber(accountNumber);
-    }
-
     @Operation(
             summary = "Get Transaction history",
             description = "Get list of all transactions done by a customers"
@@ -96,21 +78,6 @@ public class CustomerController {
     }
 
     //POST METHODS
-    @Operation(
-            summary = "Create new Customers",
-            description = "Creating new customers and assigning a unique account id which is account number"
-    )
-    @ApiResponse(
-            responseCode = "201",
-            description = "CREATED"
-
-    )
-    @PostMapping("/create-user")
-    public BankResponse createAccount(@RequestBody UserDTO userDTO)
-
-    {
-        return customerService.createAccount(userDTO);
-    }
 
     @PostMapping("/makeTransaction")
     @Operation(
@@ -125,6 +92,24 @@ public class CustomerController {
     public BankResponse makeTransaction(@RequestBody CreditDebitRequest request)
     {
         return customerService.makeTransaction(request);
+    }
+
+
+    @Autowired
+    BankStatement bankStatement;
+    @GetMapping("/statement")
+    public List<TransactionDTO> generateBankStatement(@RequestParam String accountNumber,
+                                                      @RequestParam String startDate,
+                                                      @RequestParam String endDate)
+    {
+        return bankStatement.generateBankStatement(accountNumber,startDate,endDate);
+    }
+
+    @GetMapping("/statement/sendEmail")
+    public List<TransactionDTO> sendBankStatementToEmail(@RequestParam String accountNumber,
+                                                         @RequestParam String startDate,
+                                                         @RequestParam String endDate) throws DocumentException, FileNotFoundException {
+        return bankStatement.sendBankStatementToEmail(accountNumber,startDate,endDate);
     }
 
 

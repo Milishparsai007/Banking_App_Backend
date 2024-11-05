@@ -1,8 +1,8 @@
 package org.example.bankingapplicationbackend.dto;
 
 import lombok.*;
+import org.example.bankingapplicationbackend.entity.Credentials;
 import org.example.bankingapplicationbackend.entity.Employee;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,9 +15,10 @@ import java.util.Collections;
 @Getter
 @Setter
 @Builder
-public class EmployeePrincipal implements UserDetails {
+public class CredentialPrincipal implements UserDetails {
 
-    private Employee employee;
+//    private Employee employee;
+    private Credentials credentials;
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singleton(new SimpleGrantedAuthority("USER"));
@@ -25,12 +26,12 @@ public class EmployeePrincipal implements UserDetails {
 
     @Override
     public String getPassword() {
-        return employee.getPassword();
+        return credentials.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return employee.getUserName();
+        return credentials.getUsername();
     }
 
     @Override

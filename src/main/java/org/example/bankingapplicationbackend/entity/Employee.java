@@ -14,9 +14,11 @@ import lombok.*;
 public class Employee {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "Employee Id")
     private Long id;
     @Column(name = "Employee Name",nullable = false)
     private String userName;
+    private final String role=Role.EMPLOYEE.toString();
     @Column(name = "Password",nullable = false)
     private String password;
 }

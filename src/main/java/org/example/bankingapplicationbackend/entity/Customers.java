@@ -20,6 +20,7 @@ import java.util.List;
 public class Customers {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "Customer Id")
     private long id;
     private String firstName;
     private String lastName;
@@ -33,7 +34,14 @@ public class Customers {
     private String phoneNumber;
     private String alternateNumber;
     private String status;
+
+
+    private String userName;
+    private final String role=Role.CUSTOMER.toString();
+    private String password;
     @CreationTimestamp
+
+
     private LocalDateTime createdAt;
     @UpdateTimestamp
     private LocalDateTime modifiedAt;

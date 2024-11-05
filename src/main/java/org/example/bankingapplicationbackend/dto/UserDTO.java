@@ -23,4 +23,7 @@ public class UserDTO {
     private String alternateNumber;
     private String status;
     private BigDecimal accountBalance;
+    private String userName;
+    private String password;
+    private String role;
 }

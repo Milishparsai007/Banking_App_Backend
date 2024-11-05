@@ -10,7 +10,7 @@ import java.io.FileNotFoundException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/bankStatement")
+@RequestMapping("/customer/bankStatement")
 public class TransactionController {
     @Autowired
     BankStatement bankStatement;
